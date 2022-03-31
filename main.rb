@@ -95,6 +95,36 @@ class Tree
     visited
   end
 
+  def in_order(node = root, visited = [], &block)
+    return if node.nil?
+    
+    in_order(node.left, visited, &block)
+    block_given? ? block.call(node) : visited.push(node.value)
+    in_order(node.right, visited, &block)
+
+    visited
+  end
+
+  def pre_order(node = root, visited = [], &block)
+    return if node.nil?
+    
+    block_given? ? block.call(node) : visited.push(node.value)
+    pre_order(node.left, visited, &block)
+    pre_order(node.right, visited, &block)
+
+    visited
+  end
+
+  def post_order(node = root, visited = [], &block)
+    return if node.nil?
+    
+    post_order(node.left, visited, &block)
+    post_order(node.right, visited, &block)
+    block_given? ? block.call(node) : visited.push(node.value)
+
+    visited
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
@@ -123,11 +153,26 @@ puts "deleting 67..."
 data.delete(67)
 puts data.pretty_print
 
-puts "node for value 324: #{data.find(324)}"
+#puts "node for value 324: #{data.find(324)}"
 #p data
 
-puts "level order with no block:"
-p data.level_order
-puts "level order with block:"
-data.level_order { |node, c| puts "node #{c}. #{node.value}" }
-data.level_order { |node| puts "doubled: #{node.value * 2}" }
+#puts "level order with no block:"
+#p data.level_order
+#puts "level order with block:"
+#data.level_order { |node, c| puts "node #{c}. #{node.value}" }
+#data.level_order { |node| puts "doubled: #{node.value * 2}" }
+
+puts "in order with no block"
+p data.in_order
+puts "in order with block"
+data.in_order { |node| puts "node v:#{node.value}"}
+
+puts "pre order with no block"
+p data.pre_order
+puts "pre order with block"
+data.pre_order { |node| puts node.value}
+
+puts "post order with no block"
+p data.post_order
+puts "post order with block"
+data.post_order { |node| puts node.value}
