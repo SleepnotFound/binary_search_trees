@@ -61,9 +61,38 @@ class Tree
     node
   end
 
+  #private
   def far_left_node(node) 
     node = node.left until node.left.nil?
     return node
+  end
+
+  def find(value, node = root)
+    return nil if node.nil?
+    
+    if value < node.value
+      node.left = find(value, node.left)
+    elsif value > node.value
+      node.right = find(value, node.right)
+    else
+      return node
+    end
+  end
+
+  def level_order
+    queue = Array.new
+    visited = Array.new
+    queue.push(root)
+    c = 0
+    until queue.empty? 
+      node = queue.shift
+      c += 1
+      visited.push(block_given? ? yield(node, c) : node.value)
+      queue.push(node.left) if node.left
+      queue.push(node.right) if node.right
+    end
+
+    visited
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -93,3 +122,12 @@ puts data.pretty_print
 puts "deleting 67..."
 data.delete(67)
 puts data.pretty_print
+
+puts "node for value 324: #{data.find(324)}"
+#p data
+
+puts "level order with no block:"
+p data.level_order
+puts "level order with block:"
+data.level_order { |node, c| puts "node #{c}. #{node.value}" }
+data.level_order { |node| puts "doubled: #{node.value * 2}" }
