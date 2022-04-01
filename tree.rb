@@ -17,11 +17,12 @@ class Tree
 
   def build_tree(array)
     return Node.new(array[0]) if array.length == 1
-    return nil if array.length < 1
+    return nil if array.empty?
+
     mid = array.length / 2
 
     root = Node.new(array[mid])
-    root.left = build_tree(array[0..mid -1])
+    root.left = build_tree(array[0..mid - 1])
     root.right = build_tree(array[mid + 1..array.length])
 
     root
@@ -32,7 +33,7 @@ class Tree
 
     if value < node.value
       node.left.nil? ? node.left = Node.new(value) : insert(value, node.left)
-    else 
+    else
       node.right.nil? ? node.right = Node.new(value) : insert(value, node.right)
     end
   end
@@ -45,48 +46,43 @@ class Tree
     elsif value > node.value
       node.right = delete(value, node.right)
     else
-      if node.left.nil?
-        node = node.right
-        return node
-      elsif node.right.nil?
-        node = node.left
-        return node
-      else 
-        successor = far_left_node(node.right)
-        delete(successor.value, node)
-        node.value = successor.value
-      end
+      return node.right if node.left.nil?
+      return node.left if node.right.nil?
+
+      successor = far_left_node(node.right)
+      delete(successor.value, node)
+      node.value = successor.value
     end
     node
   end
 
   private
 
-  def far_left_node(node) 
+  def far_left_node(node)
     node = node.left until node.left.nil?
-    return node
+    node
   end
 
   public
 
   def find(value, node = root)
     return nil if node.nil?
-    
+
     if value < node.value
       find(value, node.left)
     elsif value > node.value
       find(value, node.right)
     else
-      return node
+      node
     end
   end
 
   def level_order
-    queue = Array.new
-    visited = Array.new
+    queue = []
+    visited = []
     queue.push(root)
     c = 0
-    until queue.empty? 
+    until queue.empty?
       node = queue.shift
       c += 1
       visited.push(block_given? ? yield(node, c) : node.value)
@@ -99,7 +95,7 @@ class Tree
 
   def in_order(node = root, visited = [], &block)
     return if node.nil?
-    
+
     in_order(node.left, visited, &block)
     visited.push block_given? ? block.call(node) : node.value
     in_order(node.right, visited, &block)
@@ -109,7 +105,7 @@ class Tree
 
   def pre_order(node = root, visited = [], &block)
     return if node.nil?
-    
+
     visited.push block_given? ? block.call(node) : node.value
     pre_order(node.left, visited, &block)
     pre_order(node.right, visited, &block)
@@ -119,7 +115,7 @@ class Tree
 
   def post_order(node = root, visited = [], &block)
     return if node.nil?
-    
+
     post_order(node.left, visited, &block)
     post_order(node.right, visited, &block)
     visited.push block_given? ? block.call(node) : node.value
@@ -131,11 +127,11 @@ class Tree
     return nil if node.nil?
 
     if value < node.value
-      depth(value, node.left, level += 1)
+      depth(value, node.left, level + 1)
     elsif value > node.value
-      depth(value, node.right, level += 1)
+      depth(value, node.right, level + 1)
     else
-      return level
+      level
     end
   end
 
@@ -148,21 +144,21 @@ class Tree
     left_height = height(node.left)
     right_height = height(node.right)
     if left_height >= right_height
-      return left_height + 1
+      left_height + 1
     else
-      return right_height + 1
+      right_height + 1
     end
   end
 
   def balanced?
     left = height(root.left)
     right = height(root.right)
-    d = [left, right].max - [left, right].min 
-    return d < 2 ? true : false
+    d = [left, right].max - [left, right].min
+    d < 2
   end
 
   def rebalance
-    array = self.pre_order
+    array = pre_order
     self.root = build_tree(array)
   end
 

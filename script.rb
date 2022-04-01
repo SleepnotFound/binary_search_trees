@@ -1,10 +1,9 @@
-require_relative 'tree.rb'
+require_relative 'tree'
 
 array = Array.new(15) { rand(1..100) }
 data = Tree.new(array)
 
 puts "is tree balanced?: #{data.balanced?}"
-
 puts "level order with no block: #{data.level_order}"
 puts "level order(each times 2) with block: #{data.level_order { |node| node.value * 2 }}"
 
@@ -19,13 +18,13 @@ puts "post order with block: #{data.post_order { |node| node.value * 2 }}"
 
 data.pretty_print
 
-puts "adding additional nodes."
-20.times { data.insert(rand(1..100))}
-20.times { |i| data.insert(i + 1)}
+puts 'adding additional nodes.'
+20.times { data.insert(rand(1..100)) }
+20.times { |i| data.insert(i + 1) }
 data.pretty_print
 
 puts "is tree balanced?: #{data.balanced?}"
-puts "rebalancing tree..."
+puts 'rebalancing tree...'
 data.rebalance
 puts "is tree balanced?: #{data.balanced?}"
 
