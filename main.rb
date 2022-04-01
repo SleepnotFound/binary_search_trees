@@ -125,6 +125,31 @@ class Tree
     visited
   end
 
+  def depth(value, node = root, level = 0)
+    return nil if node.nil?
+
+    if value < node.value
+      depth(value, node.left, level += 1)
+    elsif value > node.value
+      depth(value, node.right, level += 1)
+    else
+      return level
+    end
+  end
+
+  def height(node = root)
+    return -1 if node.nil?
+
+    node = find(node) if node.is_a? Integer
+    left_height = height(node.left)
+    right_height = height(node.right)
+    if left_height >= right_height
+      return left_height + 1
+    else
+      return right_height + 1
+    end
+  end
+
   def pretty_print(node = @root, prefix = '', is_left = true)
     pretty_print(node.right, "#{prefix}#{is_left ? '│   ' : '    '}", false) if node.right
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
@@ -162,17 +187,25 @@ puts data.pretty_print
 #data.level_order { |node, c| puts "node #{c}. #{node.value}" }
 #data.level_order { |node| puts "doubled: #{node.value * 2}" }
 
-puts "in order with no block"
-p data.in_order
-puts "in order with block"
-data.in_order { |node| puts "node v:#{node.value}"}
+#puts "in order with no block"
+#p data.in_order
+#puts "in order with block"
+#data.in_order { |node| puts "node v:#{node.value}"}
 
-puts "pre order with no block"
-p data.pre_order
-puts "pre order with block"
-data.pre_order { |node| puts node.value}
+#puts "pre order with no block"
+#p data.pre_order
+#puts "pre order with block"
+#data.pre_order { |node| puts node.value}
 
-puts "post order with no block"
-p data.post_order
-puts "post order with block"
-data.post_order { |node| puts node.value}
+#puts "post order with no block"
+#p data.post_order
+#puts "post order with block"
+#data.post_order { |node| puts node.value}
+
+puts "depth level of value 7: #{data.depth(7)}"
+puts "depth level of value 5: #{data.depth(5)}"
+puts "depth level of value 3: #{data.depth(3)}"
+
+puts "(longest)height of 324: #{data.height(324)}"
+puts "(longest)height of 8: #{data.height(8)}"
+#puts "(longest)height of 9: #{data.height(9)}"
