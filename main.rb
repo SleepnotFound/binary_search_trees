@@ -71,9 +71,9 @@ class Tree
     return nil if node.nil?
     
     if value < node.value
-      node.left = find(value, node.left)
+      find(value, node.left)
     elsif value > node.value
-      node.right = find(value, node.right)
+      find(value, node.right)
     else
       return node
     end
@@ -137,10 +137,12 @@ class Tree
     end
   end
 
-  def height(node = root)
+  def height(node)
     return -1 if node.nil?
 
     node = find(node) if node.is_a? Integer
+    return nil if node.nil?
+
     left_height = height(node.left)
     right_height = height(node.right)
     if left_height >= right_height
@@ -148,6 +150,18 @@ class Tree
     else
       return right_height + 1
     end
+  end
+
+  def balanced?
+    left = height(root.left)
+    right = height(root.right)
+    d = [left, right].max - [left, right].min 
+    return d < 2 ? true : false
+  end
+
+  def rebalance
+    array = self.pre_order
+    self.root = build_tree(array)
   end
 
   def pretty_print(node = @root, prefix = '', is_left = true)
@@ -180,6 +194,7 @@ puts data.pretty_print
 
 #puts "node for value 324: #{data.find(324)}"
 #p data
+#puts "node for value 9: #{data.find(9)}"
 
 #puts "level order with no block:"
 #p data.level_order
@@ -202,10 +217,21 @@ puts data.pretty_print
 #puts "post order with block"
 #data.post_order { |node| puts node.value}
 
-puts "depth level of value 7: #{data.depth(7)}"
-puts "depth level of value 5: #{data.depth(5)}"
-puts "depth level of value 3: #{data.depth(3)}"
+#puts "depth level of value 7: #{data.depth(7)}"
+#puts "depth level of value 5: #{data.depth(5)}"
+#puts "depth level of value 3: #{data.depth(3)}"
 
-puts "(longest)height of 324: #{data.height(324)}"
-puts "(longest)height of 8: #{data.height(8)}"
+#puts "(longest)height of 324: #{data.height(324)}"
+#puts "(longest)height of 8: #{data.height(8)}"
 #puts "(longest)height of 9: #{data.height(9)}"
+
+puts "is data tree balanced?: #{data.balanced?}"
+puts "adding node to inbalance."
+data.insert(3)
+data.pretty_print
+puts "is data tree balanced?: #{data.balanced?}"
+
+puts "rebalancing tree:"
+data.rebalance
+puts data.pretty_print
+puts "is data now rebalanced?: #{data.balanced?}"
