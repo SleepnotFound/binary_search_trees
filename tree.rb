@@ -16,7 +16,6 @@ class Tree
   end
 
   def build_tree(array)
-    p array
     return Node.new(array[0]) if array.length == 1
     return nil if array.length < 1
     mid = array.length / 2
@@ -61,11 +60,14 @@ class Tree
     node
   end
 
-  #private
+  private
+
   def far_left_node(node) 
     node = node.left until node.left.nil?
     return node
   end
+
+  public
 
   def find(value, node = root)
     return nil if node.nil?
@@ -99,7 +101,7 @@ class Tree
     return if node.nil?
     
     in_order(node.left, visited, &block)
-    block_given? ? block.call(node) : visited.push(node.value)
+    visited.push block_given? ? block.call(node) : node.value
     in_order(node.right, visited, &block)
 
     visited
@@ -108,7 +110,7 @@ class Tree
   def pre_order(node = root, visited = [], &block)
     return if node.nil?
     
-    block_given? ? block.call(node) : visited.push(node.value)
+    visited.push block_given? ? block.call(node) : node.value
     pre_order(node.left, visited, &block)
     pre_order(node.right, visited, &block)
 
@@ -120,7 +122,7 @@ class Tree
     
     post_order(node.left, visited, &block)
     post_order(node.right, visited, &block)
-    block_given? ? block.call(node) : visited.push(node.value)
+    visited.push block_given? ? block.call(node) : node.value
 
     visited
   end
@@ -169,69 +171,4 @@ class Tree
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.value}"
     pretty_print(node.left, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left
   end
-  
 end
-
-data = Tree.new([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324])
-
-puts data.pretty_print
-puts "inserting 2..."
-data.insert(2)
-puts data.pretty_print
-
-puts "deleting 9..."
-data.delete(9)
-puts data.pretty_print
-puts "deleting 3..."
-data.delete(3)
-puts data.pretty_print
-puts "deleting 6..."
-data.delete(6)
-puts data.pretty_print
-puts "deleting 67..."
-data.delete(67)
-puts data.pretty_print
-
-#puts "node for value 324: #{data.find(324)}"
-#p data
-#puts "node for value 9: #{data.find(9)}"
-
-#puts "level order with no block:"
-#p data.level_order
-#puts "level order with block:"
-#data.level_order { |node, c| puts "node #{c}. #{node.value}" }
-#data.level_order { |node| puts "doubled: #{node.value * 2}" }
-
-#puts "in order with no block"
-#p data.in_order
-#puts "in order with block"
-#data.in_order { |node| puts "node v:#{node.value}"}
-
-#puts "pre order with no block"
-#p data.pre_order
-#puts "pre order with block"
-#data.pre_order { |node| puts node.value}
-
-#puts "post order with no block"
-#p data.post_order
-#puts "post order with block"
-#data.post_order { |node| puts node.value}
-
-#puts "depth level of value 7: #{data.depth(7)}"
-#puts "depth level of value 5: #{data.depth(5)}"
-#puts "depth level of value 3: #{data.depth(3)}"
-
-#puts "(longest)height of 324: #{data.height(324)}"
-#puts "(longest)height of 8: #{data.height(8)}"
-#puts "(longest)height of 9: #{data.height(9)}"
-
-puts "is data tree balanced?: #{data.balanced?}"
-puts "adding node to inbalance."
-data.insert(3)
-data.pretty_print
-puts "is data tree balanced?: #{data.balanced?}"
-
-puts "rebalancing tree:"
-data.rebalance
-puts data.pretty_print
-puts "is data now rebalanced?: #{data.balanced?}"
